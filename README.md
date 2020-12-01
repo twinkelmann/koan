@@ -1,6 +1,6 @@
-# koan
+# Kōan
 
-> Boards and cards based organization software
+> Boards, lists and cards based organization software
 
 #### Build Setup
 
