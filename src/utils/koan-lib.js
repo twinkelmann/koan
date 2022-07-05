@@ -1,19 +1,44 @@
 import semver from 'semver'
 import { DateTime } from 'luxon'
 import { isValidISOString } from './utils'
-const { version } = require('../../../package.json')
+const { version } = require('../../package.json')
 
 /**
- * Create a defualt empty board
- * @param {string} now the current utc datetime in ISO format, in case the data is invalid
- * @param {string} author the name of the default author, in case the data is invalid
- * @returns {import('./koan-data').Koan} an empty valid board
+ * Generate a name that is safe to use as a file name from a user defined name of the board
+ * @param {string} name The user defined name of the board
  */
-export function createEmpty(now, author) {
+export function generateSafeName(name) {
+  return (
+    name
+      // remove accents (Diacritic)
+      // https://stackoverflow.com/a/37511463
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      // replace non letters or numbers or _ by an -
+      .replace(/[^a-z0-9_]/gi, '-')
+      // remove consecutive _
+      .replace(/-{2,}/g, '-')
+      // remove starting or trailing -
+      .replace(/(^-+)|(-+$)/g, '')
+      // turn into lowercase
+      .toLowerCase()
+  )
+}
+
+/**
+ * Create a default empty board
+ * @param {string} now the current utc datetime in ISO format
+ * @param {string} name the name of the board
+ * @param {string} author the name of the author
+ * @returns {import('./koan-data-current').Koan} an empty valid board
+ */
+export function createEmpty(now, name, author) {
   return {
     koan_board: true,
     version,
     meta: {
+      name,
+      safeName: generateSafeName(name),
       created_at: now,
       updated_at: now,
       author,
@@ -77,10 +102,10 @@ export function createEmpty(now, author) {
 /**
  * Validate the current version of the data
  * This functions always returns valid koan data
- * @param {import('./koan-data').Koan} json the parsed current version JSON file
+ * @param {import('./koan-data-current').Koan} json the parsed current version JSON file
  * @param {string} now the current utc datetime in ISO format, in case the data is invalid
  * @param {string} author the name of the default author, in case the data is invalid
- * @returns {import('./koan-data').Koan} a validated current version of the data
+ * @returns {import('./koan-data-current').Koan} a validated current version of the data
  */
 function validateCurrent(json, now, author) {
   const output = createEmpty(now, author)
@@ -104,6 +129,8 @@ function validateCurrent(json, now, author) {
 
   // Data
 
+  /*
+  // TODO: import ES stage to use ?.
   if (typeof json.data === 'object' && json.data !== null) {
     // Board
     if (Array.isArray(json.data.board?.lists?.active)) {
@@ -115,6 +142,7 @@ function validateCurrent(json, now, author) {
 
     // Labels
   }
+  */
 
   // TODO: validate
   return output
@@ -122,8 +150,8 @@ function validateCurrent(json, now, author) {
 
 /**
  * Validate any version of Koan Data parsed from a JSON file
- * @param {import('./koan-data').KoanBase} json the parsed JSON file
- * @returns {import('./koan-data').Koan} a validated current version of the data
+ * @param {import('./koan-data-current').KoanBase} json the parsed JSON file
+ * @returns {import('./koan-data-current').Koan} a validated current version of the data
  * @throws if data is not valid or too recent
  */
 export function validate(json) {

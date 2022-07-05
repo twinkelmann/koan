@@ -2,6 +2,10 @@
 
 > Boards, lists and cards based organization software
 
+Wikipedia says:
+
+Kōan (公案) (/ˈkoʊæn, -ɑːn/) is a story, dialogue, question, or statement which is used in Zen practice to provoke the "great doubt" and to practice or test a student's progress in Zen.
+
 #### Build Setup
 
 ```bash

@@ -1,5 +1,8 @@
 /* globals INCLUDE_RESOURCES_PATH */
-import { app } from 'electron'
+import { app, ipcMain, shell } from 'electron'
+import { initializeNewBoard, listExistingBoards } from '../utils/disk-utils'
+import * as path from 'path'
+import * as fs from 'fs'
 
 /**
  * Set `__resources` path to resources files in renderer process
@@ -18,5 +21,31 @@ app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
 
+const appPath = path.resolve(__dirname, '..', '..')
+const userDataPath =
+  !process.env.NODE_ENV || process.env.NODE_ENV === 'production'
+    ? app.getPath('userData') // Live Mode
+    : path.join(appPath, 'AppData') // Dev Mode
+
+const boardsPath = path.join(userDataPath, 'Boards')
+
+if (!fs.existsSync(boardsPath)) {
+  // If the AppData dir doesn't exist at expected Path. Then Create
+  // Maybe the case when the user runs the app first.
+  fs.mkdirSync(boardsPath, { recursive: true })
+}
+
 // Load here all startup windows
 require('./mainWindow')
+
+ipcMain.handle('openExternal', (event, url) => {
+  return shell.openExternal(url)
+})
+
+ipcMain.handle('initializeNewBoard', (event, json) => {
+  return initializeNewBoard(json, boardsPath)
+})
+
+ipcMain.handle('listExistingBoards', (event) => {
+  return listExistingBoards(boardsPath)
+})

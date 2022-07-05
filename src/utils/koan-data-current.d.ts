@@ -1,3 +1,5 @@
+// Koan Data v0.0.1 Type Definitions
+
 export interface KoanBase {
   /**
    * Always true for a Koan board
@@ -10,6 +12,14 @@ export interface KoanBase {
 }
 
 export interface KoanMeta {
+  /**
+   * The user defined name of the board
+   */
+  name: string
+  /**
+   * The computer generated name of the board that can be safely used as a file name
+   */
+  safeName: string
   /**
    * UTC ISO datetime string of when the board was first created
    */
@@ -84,14 +94,14 @@ export interface KoanAttachment {
    */
   type: string
   /**
-   * The foramt in which the content is stored
+   * The format in which the content is stored
    */
   format: 'base64' | 'file'
 }
 
 export interface KoanEmbeddedAttachment extends KoanAttachment {
   /**
-   * Embedded attachments are stored in base64
+   * @override
    */
   format: 'base64'
   /**
@@ -111,7 +121,7 @@ export interface KoanEmbeddedAttachment extends KoanAttachment {
 
 export interface KoanDiskAttachment extends KoanAttachment {
   /**
-   * Disk attachments are stored in a file
+   * @override
    */
   format: 'file'
   /**
@@ -216,6 +226,11 @@ export interface KoanCard {
      */
     description: string
     /**
+     * User-defined UTC ISO datetime string of when the card starts. If null, no start date has been defined
+     * @nullable
+     */
+    start_date: string
+    /**
      * User-defined UTC ISO datetime string of when the card is due. If null, no due date has been defined
      * @nullable
      */
@@ -265,6 +280,11 @@ export interface KoanList {
      * User-defined name of the list
      */
     name: string
+    /**
+     * User-defined UTC ISO datetime string of when the list starts. If null, no start date has been defined
+     * @nullable
+     */
+    start_date: string
     /**
      * User-defined UTC ISO datetime string of when the list is due. If null, no due date has been defined
      * @nullable
@@ -339,4 +359,9 @@ export interface Koan extends KoanBase {
    * All the data of the board
    */
   data: KoanData
+
+  /**
+   * @override
+   */
+  version: "v0.0.1"
 }

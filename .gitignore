@@ -20,3 +20,6 @@ dist
 # electron build
 build/*
 !build/icons
+
+# dev app data
+AppData

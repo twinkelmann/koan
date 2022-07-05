@@ -1,5 +1,6 @@
 import { EventEmitter } from 'events'
 import { BrowserWindow, app } from 'electron'
+import windowStateKeeper from 'electron-window-state'
 const isProduction = process.env.NODE_ENV === 'production'
 
 export default class BrowserWinHandler {
@@ -10,7 +11,7 @@ export default class BrowserWinHandler {
   constructor(options, allowRecreate = true) {
     this._eventEmitter = new EventEmitter()
     this.allowRecreate = allowRecreate
-    this.options = options
+    this.options = options || {}
     this.browserWindow = null
     this._createInstance()
   }
@@ -30,8 +31,19 @@ export default class BrowserWinHandler {
   }
 
   _create() {
+    const mainWindowState = windowStateKeeper({
+      defaultWidth: 1000,
+      defaultHeight: 800,
+    })
+
     this.browserWindow = new BrowserWindow({
       ...this.options,
+
+      x: mainWindowState.x,
+      y: mainWindowState.y,
+      width: mainWindowState.width,
+      height: mainWindowState.height,
+
       webPreferences: {
         ...this.options.webPreferences,
         webSecurity: isProduction, // disable on dev to allow loading local resources
@@ -39,6 +51,9 @@ export default class BrowserWinHandler {
         devTools: !process.env.SPECTRON, // disable on e2e test environment
       },
     })
+
+    mainWindowState.manage(this.browserWindow)
+
     this.browserWindow.on('closed', () => {
       // Dereference the window object
       this.browserWindow = null

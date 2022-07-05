@@ -11,9 +11,3 @@ export default {
   components: { appHeader },
 }
 </script>
-
-<style>
-body {
-  margin: 0 !important;
-}
-</style>

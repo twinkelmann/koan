@@ -2,6 +2,8 @@
   "koan_board": true,
   "version": "0.0.1",
   "meta": {
+    "name": "Tim's example board",
+    "safeName": "tim-s-example-board",
     "created_at": "2020-11-30T18:38:29.366Z",
     "updated_at": "2020-11-30T18:38:29.366Z",
     "author": "Tim Winkelmann <twinkelmann@protonmail.com>",

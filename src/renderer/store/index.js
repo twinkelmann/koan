@@ -93,4 +93,5 @@ export const actions = {
 
 export const getters = {
   isAppLoading: (state) => state.isAppLoading,
+  userDataPath: (state) => state.userDataPath,
 }
